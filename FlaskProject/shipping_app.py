@@ -32,8 +32,18 @@ class Order(db.Model):
     Order_ID = db.Column(db.Integer, primary_key=True)
     Customer_ID = db.Column(db.Integer, db.ForeignKey('Customer.Customer_ID'), nullable=False)
     Type = db.Column(db.Float, nullable=False)
-    Shipping_Option = db.Column(db.String(50), nullable=False)  # FedEx or UPS
+
+
+    # Link to ShippingCompany
+    Shipping_Company_ID = db.Column(db.Integer, db.ForeignKey('ShippingCompany.Company_ID'), nullable=False)
+    shipping_company = db.relationship('ShippingCompany', backref='orders')
+
     Shipping_Cost = db.Column(db.Float, nullable=False)
+    Shipping_Option = db.Column(db.String(50), nullable=False)  # FedEx or UPS
+
+
+
+
 
 # Define the Product model
 class Product(db.Model):
@@ -53,6 +63,22 @@ class Shipping(db.Model):
     Zip_Code = db.Column(db.String(20))
     State = db.Column(db.String(50))
 
+
+# Define the ShippingCompany
+class ShippingCompany(db.Model):
+    __tablename__ = 'ShippingCompany'
+    Company_ID = db.Column(db.Integer, primary_key=True)
+    Name = db.Column(db.String(100), nullable=False, unique=True)
+
+    def __repr__(self):
+        return f"<ShippingCompany {self.Name}>"
+
+
+
+# Calculate shipping cost based on membership and selection
+def calculate_shipping_cost(customer_type, shipping_option):
+    shipping_rates = {"FedEx": 10.0, "UPS": 8.0, "Amazon": 5.0, "USPS": 6.0}  # Example rates
+
 # Calculate shipping cost based on membership and selection
 def calculate_shipping_cost(customer_type, shipping_option):
     shipping_rates = {"FedEx": 10.0, "UPS": 8.0}  # Example rates
@@ -63,23 +89,50 @@ def calculate_shipping_cost(customer_type, shipping_option):
 def create_order():
     try:
         data = request.get_json()
-        customer = Customer.query.get(data['Customer_ID'])
+        
+
+
+
+
+
+        # Get customer
+   customer = Customer.query.get(data['Customer_ID'])
         if not customer:
             return jsonify({"error": "Customer not found"}), 404
 
-        shipping_cost = calculate_shipping_cost(customer.Type, data['Shipping_Option'])
+      
+
+
+        # Get shipping company
+        company = ShippingCompany.query.filter_by(Name=data['Shipping_Company']).first()
+        if not company:
+            return jsonify({"error": "Shipping company not found"}), 404
+
+        shipping_cost = calculate_shipping_cost(customer.Type, company.Name)
+
         new_order = Order(
             Customer_ID=data['Customer_ID'],
             Type=data['Type'],
-            Shipping_Option=data['Shipping_Option'],
+            Shipping_Company_ID=company.Company_ID,
             Shipping_Cost=shipping_cost
         )
+
         db.session.add(new_order)
         db.session.commit()
-        return jsonify({"message": "Order created successfully!", "Shipping_Cost": shipping_cost}), 201
-    except SQLAlchemyError as e:
+
+        return jsonify({
+            "message": "Order created successfully!",
+            "Shipping_Cost": shipping_cost,
+            "Shipping_Company": company.Name
+        }), 201
+
+      except SQLAlchemyError as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
+
+       
+
+    
 
 # Run the Flask application in debug mode
 if __name__ == '__main__':
