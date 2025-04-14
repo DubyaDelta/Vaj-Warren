@@ -33,11 +33,16 @@ class Order(db.Model):
     Customer_ID = db.Column(db.Integer, db.ForeignKey('Customer.Customer_ID'), nullable=False)
     Type = db.Column(db.Float, nullable=False)
 
+
     # Link to ShippingCompany
     Shipping_Company_ID = db.Column(db.Integer, db.ForeignKey('ShippingCompany.Company_ID'), nullable=False)
     shipping_company = db.relationship('ShippingCompany', backref='orders')
 
     Shipping_Cost = db.Column(db.Float, nullable=False)
+    Shipping_Option = db.Column(db.String(50), nullable=False)  # FedEx or UPS
+
+
+
 
 
 # Define the Product model
@@ -58,6 +63,7 @@ class Shipping(db.Model):
     Zip_Code = db.Column(db.String(20))
     State = db.Column(db.String(50))
 
+
 # Define the ShippingCompany
 class ShippingCompany(db.Model):
     __tablename__ = 'ShippingCompany'
@@ -73,16 +79,29 @@ class ShippingCompany(db.Model):
 def calculate_shipping_cost(customer_type, shipping_option):
     shipping_rates = {"FedEx": 10.0, "UPS": 8.0, "Amazon": 5.0, "USPS": 6.0}  # Example rates
 
+# Calculate shipping cost based on membership and selection
+def calculate_shipping_cost(customer_type, shipping_option):
+    shipping_rates = {"FedEx": 10.0, "UPS": 8.0}  # Example rates
+    return 0.0 if customer_type == "Prime" else shipping_rates.get(shipping_option, 0.0)
+
 # Create a new order with shipping selection
 @app.route('/orders', methods=['POST'])
 def create_order():
     try:
         data = request.get_json()
+        
+
+
+
+
 
         # Get customer
-        customer = Customer.query.get(data['Customer_ID'])
+   customer = Customer.query.get(data['Customer_ID'])
         if not customer:
             return jsonify({"error": "Customer not found"}), 404
+
+      
+
 
         # Get shipping company
         company = ShippingCompany.query.filter_by(Name=data['Shipping_Company']).first()
@@ -107,9 +126,13 @@ def create_order():
             "Shipping_Company": company.Name
         }), 201
 
-    except SQLAlchemyError as e:
+      except SQLAlchemyError as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
+
+       
+
+    
 
 # Run the Flask application in debug mode
 if __name__ == '__main__':
