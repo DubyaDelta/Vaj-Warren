@@ -27,7 +27,7 @@ class Order(db.Model):
     __tablename__ = 'order'
 
     Order_ID = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    customer_ID = db.Column(db.Integer, db.ForeignKey('customer.customer_id'), nullable=False)
+    Customer_ID = db.Column(db.Integer, db.ForeignKey('customer.customer_id'), nullable=False)
     Order_Date = db.Column(db.DateTime, nullable=False, server_default=db.func.now())
 
     # Relationships
