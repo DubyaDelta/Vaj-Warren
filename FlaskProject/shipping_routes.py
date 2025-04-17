@@ -48,15 +48,15 @@ def create_order():
     company = ShippingCompany.query.filler_by(Name=data['Shipping_Company']).first()
 
     # Calculate shipping cost
-    shipping_cost = calculate_shipping_cost(customer.Type, data['Shipping_Option'])
+    Cost = calculate_shipping_cost(customer.Type, data['Shipping_Option'])
 
     # Create new order
     new_order = Order(
         Customer_ID=data['Customer_ID'],
         Membership_Level=data['Membership_Level'],
-        ShippingCompany_ID=company.Company_ID,
-        Shipping_Option=data['Shipping_Option'],
-        Shipping_Cost=shipping_cost
+        Shipping_ID=company.Company_ID,
+        Carrier=data['Shipping_Option'],
+        Cost=shipping_cost
 
     )
 
