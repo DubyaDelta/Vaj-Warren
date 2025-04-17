@@ -44,7 +44,7 @@ class Shipping(db.Model):
     Cost = db.Column(db.Numeric(8, 2), nullable=False)
     Shipped_On = db.Column(db.DateTime, nullable=True)
     Expected_By = db.Column(db.DateTime, nullable=True)
-    Ship_Status = db.Column(db.String(15), nullable=False,
+    Status = db.Column(db.String(15), nullable=False,
                             check_constraint="ship_status IN ('Pending', 'Shipped', 'Delivered', 'Returned')")
     Carrier = db.Column(db.String(100), nullable=False)
     Tracking_Number = db.Column(db.String(50), nullable=False)
