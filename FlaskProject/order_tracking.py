@@ -21,78 +21,34 @@ def orderTracking(orderID, orderCase):
     match orderCase:
 
         # order is being processed
-        case "processing":
+        case "pending":
             cursor.execute('''
             UPDATE Shipping
             SET Ship_Status = ?, Updated_At = ?
             WHERE Order_ID = ?
-            ''', ("processing", datetime.now(), orderID))
-            connection.commit()
-            connection.close()
-            return "Successful!"
-
-        # order is in warehouse 1
-        case "warehouse1":
-            cursor.execute('''
-            UPDATE Shipping
-            SET Ship_Status = ?, Updated_At = ?
-            WHERE Order_ID = ?
-            ''', ("warehouse1", datetime.now(), orderID))
-            connection.commit()
-            connection.close()
-            return "Successful!"
-
-        # order is being delivered to warehouse 1
-        case "warehouse1-delivering":
-            cursor.execute('''
-            UPDATE Shipping
-            SET Ship_Status = ?, Updated_At = ?
-            WHERE Order_ID = ?
-            ''', ("del-warehouse1", datetime.now(), orderID))
-            connection.commit()
-            connection.close()
-            return "Successful!"
-
-        # order is in warehouse 2
-        case "warehouse2":
-            cursor.execute('''
-            UPDATE Shipping
-            SET Ship_Status = ?, Updated_At = ?
-            WHERE Order_ID = ?
-            ''', ("warehouse2", datetime.now(), orderID))
-            connection.commit()
-            connection.close()
-            return "Successful!"
-
-        # order is being delivered to warehouse 2
-        case "warehouse2-delivering":
-            cursor.execute('''
-            UPDATE Shipping
-            SET Ship_Status = ?, Updated_At = ?
-            WHERE Order_ID = ?
-            ''', ("del-warehouse2", datetime.now(), orderID))
+            ''', ("Pending", datetime.now(), orderID))
             connection.commit()
             connection.close()
             return "Successful!"
 
         # order has been delivered to the customer
-        case "customerAddress":
+        case "delivered":
             cursor.execute('''
             UPDATE Shipping
             SET Ship_Status = ?, Updated_At = ?
             WHERE Order_ID = ?
-            ''', ("customer", datetime.now(), orderID))
+            ''', ("Delivered", datetime.now(), orderID))
             connection.commit()
             connection.close()
             return "Successful!"
 
         # order is being delivered to the customer
-        case "customerAddress-delivering":
+        case "shipped":
             cursor.execute('''
             UPDATE Shipping
             SET Ship_Status = ?, Updated_At = ?
             WHERE Order_ID = ?
-            ''', ("del-customer", datetime.now(), orderID))
+            ''', ("Shipped", datetime.now(), orderID))
             connection.commit()
             connection.close()
             return "Successful!"
