@@ -22,7 +22,7 @@ def calculate_shipping_cost(customer_type, shipping_option):
     :return: Calculated shipping cost, or 0.0 for Prime members.
     """
     shipping_rates = {"Fedex": 10.0, "UPS": 8.0, "Amazon": 8.0, "USPS": 6.0}
-    return 0.0 if customer_type.lower() == "prime" else shipping_rates.get(shipping_company_name, 0.0)
+    return 0.0 if customer_type.lower() == "prime" else shipping_rates.get(Shipping.Carrier, 0.0)
 
 
 @shipping_bp.route('/orders', methods=['POST'])
@@ -45,7 +45,7 @@ def create_order():
     if not customer:
         return jsonify({"error": "Customer not found"}), 404
 
-    company = ShippingCompany.query.filler_by(Name=data['Shipping_Company']).first()
+    company = Shipping.Carrier.query.filler_by(Name=data['Shipping_Company']).first()
 
     # Calculate shipping cost
     Cost = calculate_shipping_cost(customer.Type, data['Shipping_Option'])
@@ -56,7 +56,7 @@ def create_order():
         Membership_Level=data['Membership_Level'],
         Shipping_ID=company.Company_ID,
         Carrier=data['Shipping_Option'],
-        Cost=shipping_cost
+        Cost=Shipping.Cost
 
     )
 
@@ -67,7 +67,7 @@ def create_order():
     # Respond with success message
     return jsonify({
         "message": "Order created successfully.",
-        "Shipping_Cost": shipping_cost,
-        "Shipping_Company": company.Name
+        "Shipping_Cost": Shipping.Cost,
+        "Shipping_Company": Shipping.Carrier
     }), 201
 
