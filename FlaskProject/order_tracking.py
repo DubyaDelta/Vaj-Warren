@@ -26,7 +26,9 @@ def orderTracking(orderID, orderCase):
             UPDATE Shipping
             SET Ship_Status = ?, Updated_At = ?
             WHERE Order_ID = ?
-            ''', ("Processing Order", datetime.now(), orderID))
+            ''', ("processing", datetime.now(), orderID))
+            connection.commit()
+            connection.close()
             return "Successful!"
 
         # order is in warehouse 1
@@ -35,7 +37,9 @@ def orderTracking(orderID, orderCase):
             UPDATE Shipping
             SET Ship_Status = ?, Updated_At = ?
             WHERE Order_ID = ?
-            ''', ("In Warehouse 1", datetime.now(), orderID))
+            ''', ("warehouse1", datetime.now(), orderID))
+            connection.commit()
+            connection.close()
             return "Successful!"
 
         # order is being delivered to warehouse 1
@@ -44,7 +48,9 @@ def orderTracking(orderID, orderCase):
             UPDATE Shipping
             SET Ship_Status = ?, Updated_At = ?
             WHERE Order_ID = ?
-            ''', ("En Route to Warehouse 1", datetime.now(), orderID))
+            ''', ("del-warehouse1", datetime.now(), orderID))
+            connection.commit()
+            connection.close()
             return "Successful!"
 
         # order is in warehouse 2
@@ -53,7 +59,9 @@ def orderTracking(orderID, orderCase):
             UPDATE Shipping
             SET Ship_Status = ?, Updated_At = ?
             WHERE Order_ID = ?
-            ''', ("In Warehouse 2", datetime.now(), orderID))
+            ''', ("warehouse2", datetime.now(), orderID))
+            connection.commit()
+            connection.close()
             return "Successful!"
 
         # order is being delivered to warehouse 2
@@ -62,7 +70,9 @@ def orderTracking(orderID, orderCase):
             UPDATE Shipping
             SET Ship_Status = ?, Updated_At = ?
             WHERE Order_ID = ?
-            ''', ("En Route to Warehouse 2", datetime.now(), orderID))
+            ''', ("del-warehouse2", datetime.now(), orderID))
+            connection.commit()
+            connection.close()
             return "Successful!"
 
         # order has been delivered to the customer
@@ -71,7 +81,9 @@ def orderTracking(orderID, orderCase):
             UPDATE Shipping
             SET Ship_Status = ?, Updated_At = ?
             WHERE Order_ID = ?
-            ''', ("Delivered to Customer", datetime.now(), orderID))
+            ''', ("customer", datetime.now(), orderID))
+            connection.commit()
+            connection.close()
             return "Successful!"
 
         # order is being delivered to the customer
@@ -80,7 +92,9 @@ def orderTracking(orderID, orderCase):
             UPDATE Shipping
             SET Ship_Status = ?, Updated_At = ?
             WHERE Order_ID = ?
-            ''', ("En Route to Customer", datetime.now(), orderID))
+            ''', ("del-customer", datetime.now(), orderID))
+            connection.commit()
+            connection.close()
             return "Successful!"
 
         # orderCase is something other than the previous cases
